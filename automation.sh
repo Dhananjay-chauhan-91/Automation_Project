@@ -15,6 +15,14 @@ then
 sudo systemctl start 'apache2.service'
 fi
 sudo tar -cvf /tmp/${user_name}-httpd-logs-${timestamp}.tar -P /var/log/apache2/*.log
+filesize=$(du -sh  automation.sh | cut -f1)
+if [ -f /var/www/html/inventory.html ]
+then
+echo "</br>httpd-logs             $timestamp              tar             $filesize">>/var/www/html/inventory.html
+else
+echo "Log Type 		Time Created		Type		Size">>/var/www/html/inventory.html
+echo "</br>httpd-logs		$timestamp		tar		$filesize">>/var/www/html/inventory.html
+fi
 aws s3 \
 cp /tmp/${user_name}-httpd-logs-${timestamp}.tar \
 s3://${s3_bucket}/${user_name}-httpd-logs-${timestamp}.tar
